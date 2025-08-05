@@ -1,15 +1,18 @@
-// Simple Sokoban implementation
-
 const boardEl = document.getElementById('board');
 const levelDisplay = document.getElementById('level-display');
 const prevBtn = document.getElementById('prev');
 const nextBtn = document.getElementById('next');
 const restartBtn = document.getElementById('restart');
+const timeEl = document.getElementById('time');
+const bestTimeEl = document.getElementById('best-time');
 
 let levels = [];
 let currentLevel = 0;
 let board = [];
 let player = { x: 0, y: 0 };
+
+let timerInterval = null;
+let levelStartTime = 0;
 
 async function fetchLevels() {
   let num = 1;
@@ -68,6 +71,8 @@ function loadLevel(index) {
   levelDisplay.textContent = `Level ${currentLevel + 1}`;
   parseLevel(levels[index]);
   drawBoard();
+  startTimer();
+  updateBestTimeDisplay();
 }
 
 function isWin() {
@@ -82,19 +87,17 @@ function move(dx, dy) {
   const target = board[y1][x1];
   const beyond = board[y2] && board[y2][x2];
 
-  if (target === '#') return; // wall
+  if (target === '#') return;
 
   if (target === '$' || target === '*') {
     if (beyond === ' ' || beyond === '.' ) {
-      // move box
       board[y1][x1] = (target === '*') ? '.' : ' ';
       board[y2][x2] = (beyond === '.') ? '*' : '$';
     } else {
-      return; // can't push
+      return;
     }
   }
 
-  // move player
   const onGoal = (board[player.y][player.x] === '+');
   board[player.y][player.x] = onGoal ? '.' : ' ';
   const targetGoal = (target === '.' || target === '*');
@@ -104,9 +107,63 @@ function move(dx, dy) {
 
   drawBoard();
   if (isWin()) {
+    stopTimer();
+    saveBestTime(currentLevel, getElapsedSeconds());
     setTimeout(() => alert('Level Complete!'), 100);
   }
 }
+
+// Timer logic
+function startTimer() {
+  if (timerInterval) clearInterval(timerInterval);
+  levelStartTime = Date.now();
+  timerInterval = setInterval(() => {
+    timeEl.textContent = getElapsedSeconds().toFixed(2);
+  }, 100);
+}
+
+function stopTimer() {
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = null;
+}
+
+function getElapsedSeconds() {
+  return (Date.now() - levelStartTime) / 1000;
+}
+
+function getBestTimeKey(levelIndex) {
+  return `sokoban_best_time_level${levelIndex}`;
+}
+
+function saveBestTime(levelIndex, time) {
+  const key = getBestTimeKey(levelIndex);
+  const best = parseFloat(localStorage.getItem(key));
+  if (!best || time < best) {
+    localStorage.setItem(key, time.toFixed(2));
+    updateBestTimeDisplay();
+  }
+}
+
+function updateBestTimeDisplay() {
+  const best = localStorage.getItem(getBestTimeKey(currentLevel));
+  bestTimeEl.textContent = best ? best : '–';
+}
+
+// Navigation
+prevBtn.addEventListener('click', () => {
+  if (currentLevel > 0) {
+    loadLevel(currentLevel - 1);
+  }
+});
+
+nextBtn.addEventListener('click', () => {
+  if (currentLevel < levels.length - 1) {
+    loadLevel(currentLevel + 1);
+  }
+});
+
+restartBtn.addEventListener('click', () => loadLevel(currentLevel));
+document.addEventListener('keydown', handleKey);
 
 function handleKey(e) {
   switch (e.key) {
@@ -128,22 +185,6 @@ function handleKey(e) {
       move(1, 0); break;
   }
 }
-
-prevBtn.addEventListener('click', () => {
-  if (currentLevel > 0) {
-    loadLevel(currentLevel - 1);
-  }
-});
-
-nextBtn.addEventListener('click', () => {
-  if (currentLevel < levels.length - 1) {
-    loadLevel(currentLevel + 1);
-  }
-});
-
-restartBtn.addEventListener('click', () => loadLevel(currentLevel));
-
-document.addEventListener('keydown', handleKey);
 
 (async function init() {
   await fetchLevels();
