@@ -35,3 +35,67 @@ body {
 .player { background: #03a9f4; }
 .box-goal { background: #ff5722; }
 .player-goal { background: #80d8ff; }
+
+#instructions {
+  margin: 20px;
+  padding: 10px;
+  background: #f2f2f2;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  max-width: 400px;
+  font-family: sans-serif;
+}
+
+#instructions h2,
+#instructions h3 {
+  margin-top: 0.5em;
+}
+
+#instructions ul {
+  padding-left: 20px;
+}
+
+.legend {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  text-align: center;
+  line-height: 24px;
+  font-weight: bold;
+  border: 1px solid #333;
+  margin-right: 8px;
+}
+
+.legend.wall {
+  background-color: #444;
+  color: white;
+}
+
+.legend.box {
+  background-color: brown;
+  color: white;
+}
+
+.legend.goal {
+  background-color: gold;
+}
+
+.legend.box-goal {
+  background-color: darkorange;
+  color: white;
+}
+
+.legend.player {
+  background-color: dodgerblue;
+  color: white;
+}
+
+.legend.player-goal {
+  background-color: lightblue;
+  color: black;
+}
+
+.legend.floor {
+  background-color: #eee;
+}
+
