@@ -4,4 +4,4 @@ This repository contains a browser-based Sokoban game implemented in HTML, CSS, 
 
 ## Play
 
-(https://worthingtonjg.github.io/LdsHackathon/)
+https://worthingtonjg.github.io/LdsHackathon/
