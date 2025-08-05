@@ -107,23 +107,27 @@ body {
 
 #game-wrapper {
   display: flex;
+  flex-wrap: nowrap; /* 🛑 prevents instructions from dropping down */
   justify-content: center;
   align-items: flex-start;
   gap: 40px;
   padding: 20px;
-  max-width: 1200px;
-  margin: auto;
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 #game-area {
   display: flex;
   flex-direction: column;
   align-items: center;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 #board {
   display: grid;
   margin-bottom: 20px;
+    margin-top: 20px;
 }
 
 #controls {
