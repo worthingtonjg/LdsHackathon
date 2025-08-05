@@ -5,27 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sokoban</title>
   <link rel="stylesheet" href="style.css" />
-  <style>
-    #instructions {
-      margin-top: 20px;
-      padding: 1em;
-      background: #f4f4f4;
-      font-family: sans-serif;
-    }
-    .legend {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 8px 16px;
-      align-items: center;
-      max-width: 400px;
-      margin-bottom: 1em;
-    }
-    .legend-box {
-      width: 32px;
-      height: 32px;
-      border: 1px solid #ccc;
-    }
-  </style>
 </head>
 <body>
   <div id="game">
@@ -34,21 +13,9 @@
       <span id="level-display">Level 1</span>
       <button id="next">Next</button>
       <button id="restart">Restart</button>
-      <div id="timer">
-        Time: <span id="time">0.00</span>s |
-        Best: <span id="best-time">–</span>s
-      </div>
     </div>
     <div id="board"></div>
   </div>
-
-  <div id="instructions">
-    <h2>How to Play</h2>
-    <p>Push all the boxes (<strong>$</strong>) onto the goal tiles (<strong>.</strong>) using the player (<strong>@</strong>).</p>
-    <p>You can only push one box at a time, and you cannot walk through walls.</p>
-
-    <h3>Controls</h3>
-    <ul>
-      <li><strong>Arrow keys</strong> or <strong>WASD</strong> to move</li>
-      <li><strong>Restart</strong> button reloads the level</li>
-    </ul>
+  <script src="script.js"></script>
+</body>
+</html>
