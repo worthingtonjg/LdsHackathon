@@ -1,13 +1,16 @@
-#########
-####.####
-#  * *  #
-#  ...  #
-###.#.###
-#  .#.  #
-#   #   #
-# $###$ #
-#   $   #
-#  $#$  #
-# $ $ $ #
-##  @  ##
-#########
+﻿Description: This collection name derives from 'choripan', an spanish word that means
+             'sandwich of sausage'. This collection includes two subsets called 'chorimalism'
+             (7) and 'susi' (10). The 'chorimalism' subset (that is, minimal levels for
+             Choriban collection) is composed by levels of 2 boxes, and the subcollection
+             called 'susi' is formed by levels of small dimensions, experimenting with
+             different number of boxes, from 2 to 7. The rest of the levels have a small
+             size, normally with 3 boxes. Finally, the last two levels are based in David W.
+             Skinner's 'Microban 60', that I have called 'stack-machines'.
+Author: Martí Homs Caussa
+Email: homz70@gmail.com
+Website: http://sapiens.ya.com/sokobanhomz
+
+ #####
+##   #
+#+$  #
+######
