@@ -27,6 +27,7 @@ async function fetchLevels() {
 }
 
 function parseLevel(text) {
+
   // Remove optional title lines and pad rows so the board is rectangular
   const lines = text
     .trim()
