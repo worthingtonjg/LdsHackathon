@@ -36,7 +36,7 @@ async function fetchLevels() {
 }
 
 function parseLevel(text) {
-  board = text.trim().split('\n').map(line => line.split(''));
+  board = text.trim().split('\n').map(line => line.trimEnd().split(''));
   for (let y = 0; y < board.length; y++) {
     for (let x = 0; x < board[y].length; x++) {
       const cell = board[y][x];
