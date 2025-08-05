@@ -14,6 +14,9 @@ let player = { x: 0, y: 0 };
 let timerInterval = null;
 let startTime = 0;
 
+let moveCount = 0;
+const moveCountEl = document.getElementById('move-count');
+
 const timerEl = document.getElementById('timer');
 const bestTimeEl = document.getElementById('best-time');
 
@@ -105,8 +108,11 @@ function loadLevel(index) {
   parseLevel(levels[index]);
   drawBoard();
   startTimer();
-  loadBestTime(index)
+  loadBestTime(index);
+  moveCount = 0;
+  moveCountEl.textContent = moveCount;
 }
+
 
 function isWin() {
   return board.every(row => row.every(cell => cell !== '$'));
@@ -139,6 +145,9 @@ function move(dx, dy) {
   board[y1][x1] = targetGoal ? '+' : '@';
   player.x = x1;
   player.y = y1;
+  
+  moveCount++;
+  moveCountEl.textContent = moveCount;
 
   drawBoard();
   if (isWin()) {
