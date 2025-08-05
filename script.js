@@ -11,6 +11,12 @@ let currentLevel = 0;
 let board = [];
 let player = { x: 0, y: 0 };
 
+let timerInterval = null;
+let startTime = 0;
+
+const timerEl = document.getElementById('timer');
+const bestTimeEl = document.getElementById('best-time');
+
 async function fetchLevels() {
   let num = 1;
   while (true) {
@@ -63,11 +69,43 @@ function drawBoard() {
   }
 }
 
+function startTimer() {
+  startTime = Date.now();
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    const elapsed = (Date.now() - startTime) / 1000;
+    timerEl.textContent = `${elapsed.toFixed(1)}s`;
+  }, 100);
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
+  const timeTaken = (Date.now() - startTime) / 1000;
+  return timeTaken;
+}
+
+function loadBestTime(index) {
+  const key = `sokoban_best_time_${index}`;
+  const best = localStorage.getItem(key);
+  bestTimeEl.textContent = best ? `${parseFloat(best).toFixed(1)}s` : '–';
+}
+
+function saveBestTime(index, time) {
+  const key = `sokoban_best_time_${index}`;
+  const best = localStorage.getItem(key);
+  if (!best || time < parseFloat(best)) {
+    localStorage.setItem(key, time.toFixed(1));
+    bestTimeEl.textContent = `${time.toFixed(1)}s`;
+  }
+}
+
 function loadLevel(index) {
   currentLevel = index;
   levelDisplay.textContent = `Level ${currentLevel + 1}`;
   parseLevel(levels[index]);
   drawBoard();
+  startTimer();
+  loadBestTime(index)
 }
 
 function isWin() {
@@ -104,7 +142,9 @@ function move(dx, dy) {
 
   drawBoard();
   if (isWin()) {
-    setTimeout(() => alert('Level Complete!'), 100);
+    const time = stopTimer();
+    saveBestTime(currentLevel, time);
+    setTimeout(() => alert(`Level Complete!\nTime: ${time.toFixed(1)}s`), 100);
   }
 }
 
