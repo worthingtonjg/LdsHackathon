@@ -1,20 +1,16 @@
+// Simple Sokoban implementation
+
 const boardEl = document.getElementById('board');
 const levelDisplay = document.getElementById('level-display');
 const prevBtn = document.getElementById('prev');
 const nextBtn = document.getElementById('next');
 const restartBtn = document.getElementById('restart');
-const timeEl = document.getElementById('time');
-const bestTimeEl = document.getElementById('best-time');
 
 let levels = [];
 let currentLevel = 0;
 let board = [];
 let player = { x: 0, y: 0 };
 
-let timerInterval = null;
-let levelStartTime = 0;
-
-// === Fetch Level Files ===
 async function fetchLevels() {
   let num = 1;
   while (true) {
@@ -25,13 +21,11 @@ async function fetchLevels() {
       levels.push(text);
       num++;
     } catch (e) {
-      console.error("Error fetching level " + num, e);
       break;
     }
   }
 }
 
-// === Parse Level Text ===
 function parseLevel(text) {
   board = text.trim().split('\n').map(line => line.split(''));
   for (let y = 0; y < board.length; y++) {
@@ -45,7 +39,6 @@ function parseLevel(text) {
   }
 }
 
-// === Draw Board ===
 function drawBoard() {
   boardEl.innerHTML = '';
   boardEl.style.gridTemplateRows = `repeat(${board.length}, 32px)`;
@@ -70,121 +63,88 @@ function drawBoard() {
   }
 }
 
-// === Load Level ===
 function loadLevel(index) {
   currentLevel = index;
-  if (index >= levels.length) return;
   levelDisplay.textContent = `Level ${currentLevel + 1}`;
   parseLevel(levels[index]);
   drawBoard();
-  startTimer();
-  updateBestTimeDisplay();
 }
 
-// === Win Condition ===
 function isWin() {
   return board.every(row => row.every(cell => cell !== '$'));
 }
 
-// === Movement ===
 function move(dx, dy) {
   const x1 = player.x + dx;
   const y1 = player.y + dy;
   const x2 = player.x + dx * 2;
   const y2 = player.y + dy * 2;
-  const target = board[y1]?.[x1];
-  const beyond = board[y2]?.[x2];
+  const target = board[y1][x1];
+  const beyond = board[y2] && board[y2][x2];
 
-  if (!target || target === '#') return;
+  if (target === '#') return; // wall
 
   if (target === '$' || target === '*') {
-    if (beyond === ' ' || beyond === '.') {
+    if (beyond === ' ' || beyond === '.' ) {
+      // move box
       board[y1][x1] = (target === '*') ? '.' : ' ';
       board[y2][x2] = (beyond === '.') ? '*' : '$';
     } else {
-      return;
+      return; // can't push
     }
   }
 
-  const onGoal = board[player.y][player.x] === '+';
+  // move player
+  const onGoal = (board[player.y][player.x] === '+');
   board[player.y][player.x] = onGoal ? '.' : ' ';
-  board[y1][x1] = (target === '.' || target === '*') ? '+' : '@';
+  const targetGoal = (target === '.' || target === '*');
+  board[y1][x1] = targetGoal ? '+' : '@';
   player.x = x1;
   player.y = y1;
 
   drawBoard();
-
   if (isWin()) {
-    stopTimer();
-    saveBestTime(currentLevel, getElapsedSeconds());
-    setTimeout(() => alert("Level Complete!"), 100);
+    setTimeout(() => alert('Level Complete!'), 100);
   }
 }
 
-// === Timer ===
-function startTimer() {
-  stopTimer();
-  levelStartTime = Date.now();
-  timerInterval = setInterval(() => {
-    timeEl.textContent = getElapsedSeconds().toFixed(2);
-  }, 100);
-}
-
-function stopTimer() {
-  if (timerInterval) {
-    clearInterval(timerInterval);
-    timerInterval = null;
-  }
-}
-
-function getElapsedSeconds() {
-  return (Date.now() - levelStartTime) / 1000;
-}
-
-// === Best Time ===
-function getBestTimeKey(levelIndex) {
-  return `sokoban_best_time_level${levelIndex}`;
-}
-
-function saveBestTime(levelIndex, time) {
-  const key = getBestTimeKey(levelIndex);
-  const best = parseFloat(localStorage.getItem(key));
-  if (!best || time < best) {
-    localStorage.setItem(key, time.toFixed(2));
-    updateBestTimeDisplay();
-  }
-}
-
-function updateBestTimeDisplay() {
-  const best = localStorage.getItem(getBestTimeKey(currentLevel));
-  bestTimeEl.textContent = best ?? '–';
-}
-
-// === Key Controls ===
 function handleKey(e) {
-  switch (e.key.toLowerCase()) {
-    case 'arrowup':
-    case 'w': move(0, -1); break;
-    case 'arrowdown':
-    case 's': move(0, 1); break;
-    case 'arrowleft':
-    case 'a': move(-1, 0); break;
-    case 'arrowright':
-    case 'd': move(1, 0); break;
+  switch (e.key) {
+    case 'ArrowUp':
+    case 'w':
+    case 'W':
+      move(0, -1); break;
+    case 'ArrowDown':
+    case 's':
+    case 'S':
+      move(0, 1); break;
+    case 'ArrowLeft':
+    case 'a':
+    case 'A':
+      move(-1, 0); break;
+    case 'ArrowRight':
+    case 'd':
+    case 'D':
+      move(1, 0); break;
   }
 }
 
-// === Navigation Buttons ===
 prevBtn.addEventListener('click', () => {
-  if (currentLevel > 0) loadLevel(currentLevel - 1);
+  if (currentLevel > 0) {
+    loadLevel(currentLevel - 1);
+  }
 });
+
 nextBtn.addEventListener('click', () => {
-  if (currentLevel < levels.length - 1) loadLevel(currentLevel + 1);
+  if (currentLevel < levels.length - 1) {
+    loadLevel(currentLevel + 1);
+  }
 });
+
 restartBtn.addEventListener('click', () => loadLevel(currentLevel));
+
 document.addEventListener('keydown', handleKey);
 
-// === Initialization ===
 (async function init() {
   await fetchLevels();
   if (levels.length === 0) {
